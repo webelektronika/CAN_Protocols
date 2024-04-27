@@ -1,0 +1,30 @@
+#include <SPI.h>
+#include <mcp2515.h>
+#define pin 10
+
+int rcvNumber;
+struct can_frame WE;
+
+MCP2515 mcp2515(pin);
+
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println("CAN BUS - WebElektronika");
+  SPI.begin();
+  mcp2515.reset();
+  mcp2515.setBitrate(CAN_500KBPS, MCP_8MHZ);
+  mcp2515.setNormalMode();
+}
+
+void loop()
+{
+  if(mcp2515.readMessage(&WE) == MCP2515::ERROR_OK)
+  {
+    rcvNumber = WE.data[0];
+    Serial.print("Az átküldött véletlenszám: ");
+    Serial.println(rcvNumber);
+    Serial.print(WE.data[1]);
+    Serial.println("");
+  }
+}
